@@ -1,0 +1,9 @@
+update.exe
+install.exe
+splash.png
+sandbox.png
+environment.bat
+uninstall.bat
+config\README.txt
+output\README.txt
+cache\README.txt
