@@ -27,34 +27,61 @@ class PlaceholderCommander(Commander):
         self.timer = 0
         self.timerspan = 30
 
+        # Set up the distribution of defenders and attackers
+        self.defenders = 2
+        self.attackers = len(self.game.bots_alive) - self.defenders # Rest are attackers
+        
+        # Set up the Bot Action Queue.
+        self.BAC = {}
+        
+        # Add the first command for the defenders to the BAC
+        for i in range(self.defenders):
+            bot = self.game.bots_alive[i]
+            self.BAC[bot] = []
+            
+            self.issue(commands.Move, bot, self.game.team.flag.position, description ='MOVE') #self.BAC[bot] = [(commands.Move, bot, self.game.team.flag.position, 'MOVE')]
+            self.issue(commands.Defend, bot, self.game.enemyTeam.flag.position, description = 'DFND') #self.BAC[bot].append((commands.Defend, bot, self.game.enemyTeam.flag.position, 'DFND'))
+            
+        # Add the first command for the attackers to the BAC
+        for i in range(self.defenders, self.attackers + self.defenders):
+            bot = self.game.bots_alive[i]
+            self.BAC[bot] = [(commands.Attack, bot, self.game.enemyTeam.flag.position, 'ATCK')]
+
+
         print 'width: ' + str(self.level.width)
-        print 'height: ' + str(self.level.height)        
+        print 'height: ' + str(self.level.height)
 
     def tick(self):
         """Override this function for your own bots.  Here you can access all the information in self.game,
         which includes game information, and self.level which includes information about the level."""
 
-        # Give the bot a random move location every self.timerspan timer ticks
+        """
+        # Give the bot a random attack location every self.timerspan ticks
         if self.timer == 0:
-            i = 0
             for bot in self.game.bots_alive:
+
+                # Generate a random valid position on the map.
                 randompos = False
                 while not randompos:
                     randompos = Vector2(rand.random() * self.level.width, rand.random() * self.level.height)
                     randompos = self.level.findNearestFreePosition(randompos)
-                    
+
+                # Attack at the random position.
                 self.issue(commands.Attack,
                            bot,
                            randompos,
-                           self.look(i / float(self.numbots)),
                            description = "[" + str(int(randompos.x)) + ", " + str(int(randompos.y)) + "]")
-                i = i + 1
 
-        self.timer = (self.timer + 1) % self.timerspan
-           
+        self.timer = (self.timer + 1) % self.timerspan # Increment the timer.
+        """
 
-        
-        
+        for bot in self.game.bots_available:
+            if len(self.BAC[bot]) > 0:
+                cmd = self.BAC[bot].pop(0)
+                
+                self.issue(cmd[0], cmd[1], cmd[2], description = cmd[3])
+
+
         """
         # for all bots which aren't currently doing anything
         for bot in self.game.bots_available:
@@ -79,11 +106,8 @@ class PlaceholderCommander(Commander):
 
         return_vec = Vector2()
         angle = 2 * math.pi * f
-        
+
         return_vec.x = (self.level.width - 1) * abs(math.sin(angle))
         return_vec.y = (self.level.height - 1) * abs(math.cos(angle))
 
         return return_vec
-
-
-        
