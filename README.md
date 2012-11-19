@@ -1,13 +1,11 @@
-CODE REPOSITORY FOR AI SANDBOX COMPETITION
-
-Collaborators:
+Collaborators: 
+---
   Rowan W. Hale
-==========================================
 
 
-=================
-===   SETUP  ====
-=================
+ 
+Setup
+---
 
 - Just clone the repo and run "/The AI Sandbox/CaptureTheFlag-sdk/simulate.bat/" to run a test game!
 - REPO MUST BE IN /AppData/Local/ IN ORDER TO RUN
